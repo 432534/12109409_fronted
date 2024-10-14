@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard with Charts</title>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Dashboard</h1>
+    <div id="theme-toggle">
+        <label class="switch">
+            <input type="checkbox" id="toggleDarkMode">
+            <span class="slider round"></span>
+        </label>
+    </div>
+   <div id="date-range">
+       <label for="fromDatePicker">From: </label>
+       <input type="text" id="fromDatePicker" />
+       
+       <label for="toDatePicker">To: </label>
+       <input type="text" id="toDatePicker" />
+       
+       <button id="applyDateRange">Apply</button>
+   </div>
+   <div class="chart-container grid">
+    <div class="grid-item">
+        <h2>Chart 1</h2>
+        <h3>Visitors per day</h3>
+        <p>This chart displays the daily visitor count to our website, highlighting trends and fluctuations in user traffic. Analyzing this data helps us understand audience engagement and optimize marketing strategies</p>
+    </div>
+    <div class="grid-item">
+        <h2>Chart 2</h2>
+        <h3>Visitor per country</h3>
+        <p>This chart illustrates the distribution of website visitors by country, providing insights into our global reach. Understanding visitor demographics allows us to tailor content and marketing efforts to specific regions</p>
+    </div>
+    <div class="grid-item">
+        <h2>Chart 3</h2>
+        <h3>Total adult and Total childer visitors</h3>
+        <p>his chart displays the total number of adult and child visitors, highlighting the demographic breakdown of our audience. Analyzing these figures helps us understand user engagement and tailor our offerings accordingly</p>
+    </div>    
+</div>
+   <div id="timeSeriesChart" class="chart-container"></div>
+   <div id="countryColumnChart" class="chart-container"></div>
+   <div class="chart-container">
+       <div id="sparklineAdultVisitors" style="width: 48%; display: inline-block;">
+
+       </div>
+       <div id="sparklineChildrenVisitors" style="width: 48%; display: inline-block;">
+
+       </div>
+   </div>
+
+   <script>
+const toggleButton = document.getElementById('toggleDarkMode');
+toggleButton.addEventListener('change', () => {
+    document.body.classList.toggle('dark-mode');
+});
+
+       var timeSeriesChart = new ApexCharts(document.querySelector("#timeSeriesChart"), {
+           chart: { type: 'line', height: 350, zoom: { enabled: true } },
+           series: [{ name: 'Visitors per Day', data: [] }],
+           xaxis: { type: 'datetime' },
+           title: { text: 'Visitors per Day', align: 'left' }
+       });
+       timeSeriesChart.render();
+
+       var countryColumnChart = new ApexCharts(document.querySelector("#countryColumnChart"), {
+           chart: { type: 'bar', height: 350 },
+           series: [{ name: 'Visitors', data: [] }],
+           xaxis: { categories: [] },
+           title: { text: 'Visitors per Country', align: 'left' }
+       });
+       countryColumnChart.render();
+
+       var sparklineAdultVisitors = new ApexCharts(document.querySelector("#sparklineAdultVisitors"), {
+           chart: { type: 'line', height: 150, sparkline: { enabled: true } },
+           series: [{ name: 'Adult Visitors', data: [] }],
+           xaxis: { type: 'datetime' },
+           title: { text: 'Total Adult Visitors', align: 'left' }
+       });
+       sparklineAdultVisitors.render();
+
+       var sparklineChildrenVisitors = new ApexCharts(document.querySelector("#sparklineChildrenVisitors"), {
+           chart: { type: 'line', height: 150, sparkline: { enabled: true } },
+           series: [{ name: 'Children Visitors', data: [] }],
+           xaxis: { type: 'datetime' },
+           title: { text: 'Total Children Visitors', align: 'left' }
+       });
+       sparklineChildrenVisitors.render();
+
+       const fromDatePicker = flatpickr("#fromDatePicker", {
+           dateFormat: "Y-m-d",
+           defaultDate: "2015-07-01"
+       });
+
+       const toDatePicker = flatpickr("#toDatePicker", {
+           dateFormat: "Y-m-d",
+           defaultDate: "2015-08-09"
+       });
+
+       document.getElementById('applyDateRange').addEventListener('click', function() {
+           const startDate = fromDatePicker.selectedDates[0];
+           const endDate = toDatePicker.selectedDates[0];
+
+           if (startDate && endDate) {
+               updateCharts(startDate, endDate);
+           } else {
+               alert("Please select both 'From' and 'To' dates.");
+           }
+       });
+
+       const defaultStartDate = new Date("2015-07-01");
+       const defaultEndDate = new Date("2015-08-09");
+       updateCharts(defaultStartDate, defaultEndDate);
+
+       function updateCharts(startDate, endDate) {
+           const formattedStart = startDate.toISOString().split('T')[0];
+           const formattedEnd = endDate.toISOString().split('T')[0];
+           fetch(`http://localhost:3000/api/data?startDate=${formattedStart}&endDate=${formattedEnd}`)
+               .then(response => response.json())
+               .then(data => {
+                   timeSeriesChart.updateSeries([{ data: data.timeSeriesData }]);
+                   countryColumnChart.updateSeries([{
+                       data: data.countryData.map(country => country.visitors)
+                   }]);
+                   countryColumnChart.updateOptions({
+                       xaxis: {
+                           categories: data.countryData.map(country => country.country)
+                       }
+                   });
+                   sparklineAdultVisitors.updateSeries([{ data: [{ x: new Date(), y: data.totalAdultVisitors }] }]);
+                   sparklineChildrenVisitors.updateSeries([{ data: [{ x: new Date(), y: data.totalChildrenVisitors }] }]);
+               })
+               .catch(err => console.error("Error fetching data:", err));
+       }
+   </script>
+</body>
+</html>
