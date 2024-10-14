@@ -13,15 +13,17 @@ The Visitor Analytics Dashboard is a responsive web application designed to visu
 - HTML5
 - CSS3
 - JavaScript
-- [Framework/Library Name] (e.g., React, Angular, Vue.js)
-- [Charting Library Name] (e.g., Chart.js, D3.js)
-- [Backend Technology] (if applicable, e.g., Node.js, Python Flask)
-- [Database] (if applicable, e.g., MongoDB, PostgreSQL)
+-backend[node js,express]
+-api handling
 
 ## Installation
 1. Clone the repository:
    ```bash
    git clone https://github.com/432534/12109409_fronted.git
+2. Start the backend:
+   ```bash
+   node server.js
+   
 Navigate to the project directory:
 Copy
 cd 12109409_fronted
