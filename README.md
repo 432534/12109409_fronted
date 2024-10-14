@@ -1,7 +1,7 @@
-# Visitor Analytics Dashboard
+# Dashboard
 
 ## Overview
-The Visitor Analytics Dashboard is a responsive web application designed to visualize visitor data effectively. It provides an interactive interface that allows users to explore data trends over different periods and across various countries.
+The  Dashboard is a responsive web application designed to visualize visitor data effectively. It provides an interactive interface that allows users to explore data trends over different periods and across various countries.
 ![image](https://github.com/user-attachments/assets/9bf2edcf-ee49-40f9-8447-ba5406833d14)
 ![image](https://github.com/user-attachments/assets/9c5e05bc-de44-4d1a-bdc5-af5304c616ee)
 ![image](https://github.com/user-attachments/assets/9bf2d554-ea4b-4c42-924c-cd7da4df144b)
