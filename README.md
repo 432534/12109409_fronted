@@ -59,5 +59,5 @@ Acknowledgments
 [Any libraries or frameworks you want to acknowledge]
 [Any inspirations or resources]
 Contact
-For any questions or inquiries, please reach out to [Your Name] at [Your Email].
+For any questions or inquiries, please reach out to adarshpr273@gmail.com.
 
